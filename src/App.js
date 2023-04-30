@@ -17,9 +17,7 @@ class App extends Component {
   };
 
   handleSubmit = (data) => {
-    const check = this.state.contacts.find((el) =>
-      el.name.toLowerCase().includes(data.name.toLowerCase())
-    );
+    const check = this.state.contacts.find((el) => el.name === data.name);
     if (check) {
       return alert(`${data.name} is already in contacts`);
     }
@@ -41,8 +39,11 @@ class App extends Component {
   render() {
     const { contacts, filter } = this.state;
     const normalizedFilter = filter.toLowerCase();
-    const visibleContacts = contacts.filter((el) =>
-      el.name.toLowerCase().includes(normalizedFilter)
+    const isContacts = this.state.contacts.length > 0;
+    const visibleContacts = contacts.filter(
+      (el) =>
+        el.name.toLowerCase().includes(normalizedFilter) ||
+        el.number.includes(normalizedFilter)
     );
     return (
       <div className="App">
@@ -50,13 +51,15 @@ class App extends Component {
         <ContactForm onSubmit={this.handleSubmit} />
         <h2>Contacts</h2>
         <Filter filter={this.handleFilter} value={filter} />
-        {this.state.contacts.length > 0 ? (
+        {isContacts ? (
           <ContactList
             contacts={visibleContacts}
             onDelete={this.handleDelete}
           />
         ) : (
-          <p>There is no contacts yet!</p>
+          <p>
+            <b>There is no contacts yet!</b>
+          </p>
         )}
       </div>
     );

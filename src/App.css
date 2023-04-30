@@ -8,9 +8,11 @@ ul {
 li {
   display: flex;
   align-items: center;
-  padding: 10px;
+  justify-content: space-between;
+  padding: 10px 0;
 }
 span {
-  margin-left: 15px;
+  margin-left: 10px;
+  margin-right: auto;
   font-weight: bold;
 }

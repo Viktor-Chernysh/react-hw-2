@@ -1,60 +1,43 @@
-import { Component } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { object, string, number } from "yup";
 import "./Form.module.css";
 
-const INITIAL_STATE = {
+let contactSchema = object({
+  name: string().min(2).required(),
+  number: number().required().positive().integer(),
+});
+
+const initialValues = {
   name: "",
   number: "",
 };
 
-class Form extends Component {
-  state = { name: "", number: "" };
-
-  handleChange = (e) => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
+function ContactForm({ onSubmit }) {
+  const handleSubmit = (values, { resetForm }) => {
+    onSubmit(values);
+    resetForm();
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.onSubmit(this.state);
-    this.resetForm();
-  };
-
-  resetForm = () => {
-    this.setState({ ...INITIAL_STATE });
-  };
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label htmlFor="">
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={contactSchema}
+    >
+      <Form>
+        <label htmlFor="name">
           Name
-          <input
-            type="text"
-            name="name"
-            onChange={this.handleChange}
-            value={this.state.name}
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-          />
+          <Field type="text" name="name" />
+          <ErrorMessage name="name" />
         </label>
-
-        <label htmlFor="">
+        <label htmlFor="number">
           Number
-          <input
-            type="tel"
-            name="number"
-            onChange={this.handleChange}
-            value={this.state.number}
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            required
-          />
+          <Field type="text" name="number" minLength={2} />
+          <ErrorMessage name="number" />
         </label>
         <button type="submit">Add contact</button>
-      </form>
-    );
-  }
+      </Form>
+    </Formik>
+  );
 }
-export default Form;
+export default ContactForm;
